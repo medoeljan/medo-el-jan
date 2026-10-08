@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEDO EL JAN | تعليم البرمجة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --primary: #00f5d4;
+      --primary-dim: #00c4a8;
+      --secondary: #7b2cbf;
+      --accent: #ff6b6b;
+      --text: #e8e8f0;
+      --text-muted: #9a9ab0;
+      --border: rgba(255,255,255,0.08);
+      --glow: 0 0 30px rgba(0, 245, 212, 0.25);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ===== Animated Background ===== */
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .gradient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 20% -20%, rgba(123, 44, 191, 0.25), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0, 245, 212, 0.12), transparent),
+        radial-gradient(ellipse 50% 30% at 50% 50%, rgba(255, 107, 107, 0.06), transparent);
+      animation: gradientShift 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes gradientShift {
+      0% { opacity: 0.8; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.05); }
+    }
+
+    /* Floating code snippets */
+    .floating-code {
+      position: fixed;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: rgba(0, 245, 212, 0.15);
+      z-index: 0;
+      pointer-events: none;
+      animation: floatCode 20s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes floatCode {
+      0% { transform: translateY(100vh) rotate(-5deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(5deg); opacity: 0; }
+    }
+
+    /* ===== Layout ===== */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== Navbar ===== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.75);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--primary), #7b2cbf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+
+    .logo span {
+      font-weight: 400;
+      opacity: 0.85;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.25s;
+      position: relative;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      right: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.25s;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+      color: #0a0a0f;
+      box-shadow: var(--glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(0, 245, 212, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: rgba(0, 245, 212, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      position: relative;
+    }
+
+    .hero .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .hero-content {
+      max-width: 540px;
+      flex: 1 1 320px;
+    }
+
+    .hero-image-wrapper {
+      flex: 1 1 320px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-image {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 20px;
+      box-shadow: 
+        0 0 40px rgba(0, 245, 212, 0.25),
+        0 0 80px rgba(123, 44, 191, 0.2),
+        0 20px 50px rgba(0, 0, 0, 0.5);
+      animation: floatImage 5s ease-in-out infinite, glowPulse 3s ease-in-out infinite;
+      border: 2px solid rgba(0, 245, 212, 0.3);
+    }
+
+    @keyframes floatImage {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-18px) rotate(1deg); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { 
+        box-shadow: 
+          0 0 30px rgba(0, 245, 212, 0.25),
+          0 0 60px rgba(123, 44, 191, 0.15),
+          0 20px 50px rgba(0, 0, 0, 0.5);
+      }
+      50% { 
+        box-shadow: 
+          0 0 50px rgba(0, 245, 212, 0.45),
+          0 0 90px rgba(123, 44, 191, 0.3),
+          0 20px 50px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 245, 212, 0.1);
+      border: 1px solid rgba(0, 245, 212, 0.25);
+      color: var(--primary);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      max-width: 540px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat h3 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* ===== Sections ===== */
+    section {
+      padding: 100px 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ===== Courses ===== */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+    }
+
+    .course-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .course-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 245, 212, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .course-card:hover::before {
+      opacity: 1;
+    }
+
+    .course-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      background: rgba(0, 245, 212, 0.1);
+    }
+
+    .course-card h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .course-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .course-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .course-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(123, 44, 191, 0.2);
+      color: #c77dff;
+      margin-bottom: 16px;
+    }
+
+    /* ===== Features ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: rgba(18, 18, 26, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(0, 245, 212, 0.25);
+      background: rgba(18, 18, 26, 0.95);
+    }
+
+    .feature-icon {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      text-align: center;
+      padding: 80px 0;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, rgba(0, 245, 212, 0.08), rgba(123, 44, 191, 0.12));
+      border: 1px solid rgba(0, 245, 212, 0.2);
+      border-radius: 24px;
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box h2 {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .cta-box p {
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      font-size: 1.1rem;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .footer-brand .logo {
+      font-size: 1.3rem;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .footer-brand p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 28px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.25s;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 72px;
+        right: 0;
+        left: 0;
+        background: rgba(10, 10, 15, 0.98);
+        flex-direction: column;
+        padding: 24px;
+        gap: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .hero .container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-stats {
+        gap: 24px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .hero-image {
+        max-width: 320px;
+        margin-top: 20px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="gradient-bg"></div>
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Floating code elements -->
+  <div class="floating-code" style="left: 10%; animation-delay: 0s;">const learn = () => success;</div>
+  <div class="floating-code" style="left: 70%; animation-delay: 4s;">function code() { return true; }</div>
+  <div class="floating-code" style="left: 30%; animation-delay: 8s;">while(true) { practice(); }</div>
+  <div class="floating-code" style="left: 55%; animation-delay: 12s;">if (dream) makeItReal();</div>
+  <div class="floating-code" style="left: 85%; animation-delay: 16s;">&lt;MEDO EL JAN /&gt;</div>
+
+  <!-- Navbar -->
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#" class="logo">MEDO <span>EL JAN</span></a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#home" class="active">الرئيسية</a></li>
+          <li><a href="#courses">الدورات</a></li>
+          <li><a href="#features">المميزات</a></li>
+          <li><a href="#contact">تواصل</a></li>
+        </ul>
+        <a href="#courses" class="btn btn-primary">ابدأ التعلم</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="القائمة">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="hero-content">
+        <div class="badge">منصة تعليم برمجة حديثة</div>
+        <h1>
+          تعلّم البرمجة مع<br>
+          <span class="highlight">MEDO EL JAN</span>
+        </h1>
+        <p>
+          ابدأ رحلتك في عالم البرمجة من الصفر حتى الاحتراف. دروس مبسطة، تمارين عملية، ومشاريع حقيقية تبني مستقبلك التقني.
+        </p>
+        <div class="hero-actions">
+          <a href="#courses" class="btn btn-primary">استكشف الدورات</a>
+          <a href="#features" class="btn btn-outline">اعرف أكتر</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <h3>+50</h3>
+            <p>درس تفاعلي</p>
+          </div>
+          <div class="stat">
+            <h3>+10</h3>
+            <p>مشروع عملي</p>
+          </div>
+          <div class="stat">
+            <h3>24/7</h3>
+            <p>دعم مستمر</p>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image-wrapper">
+        <img src="hero-image.jpg" alt="MEDO EL JAN - هكرز" class="hero-image" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Courses -->
+  <section id="courses">
+    <div class="container">
+      <div class="section-header">
+        <h2>الدورات المتاحة</h2>
+        <p>اختر المسار اللي يناسبك وابدأ رحلة التعلم</p>
+      </div>
+      <div class="courses-grid">
+        <div class="course-card">
+          <span class="tag">مبتدئ</span>
+          <div class="course-icon">🌐</div>
+          <h3>أساسيات الويب</h3>
+          <p>تعلّم HTML, CSS, JavaScript من الصفر وابنِ أول موقع ليك.</p>
+          <div class="course-meta">
+            <span>📚 18 درس</span>
+            <span>⏱ 12 ساعة</span>
+          </div>
+        </div>
+        <div class="course-card">
+          <span class="tag">متوسط</span>
+          <div class="course-icon">⚡</div>
+          <h3>JavaScript المتقدم</h3>
+          <p>اتعمق في ES6+، DOM، الـ APIs، وابنِ تطبيقات تفاعلية قوية.</p>
+          <div class="course-meta">
+            <span>📚 24 درس</span>
+            <span>⏱ 18 ساعة</span>
+          </div>
+        </div>
+        <div class="course-card">
+          <span class="tag">مبتدئ</span>
+          <div class="course-icon">🐍</div>
+          <h3>بايثون للمبتدئين</h3>
+          <p>ابدأ بلغة بايثون، أهم لغة في الذكاء الاصطناعي وتحليل البيانات.</p>
+          <div class="course-meta">
+            <span>📚 20 درس</span>
+            <span>⏱ 15 ساعة</span>
+          </div>
+        </div>
+        <div class="course-card">
+          <span class="tag">متقدم</span>
+          <div class="course-icon">⚛️</div>
+          <h3>React.js</h3>
+          <p>ابنِ واجهات مستخدم حديثة وسريعة باستخدام أشهر مكتبة في العالم.</p>
+          <div class="course-meta">
+            <span>📚 22 درس</span>
+            <span>⏱ 20 ساعة</span>
+          </div>
+        </div>
+        <div class="course-card">
+          <span class="tag">متوسط</span>
+          <div class="course-icon">🗄️</div>
+          <h3>قواعد البيانات</h3>
+          <p>تعلّم SQL و MongoDB وصمم قواعد بيانات احترافية لمشاريعك.</p>
+          <div class="course-meta">
+            <span>📚 16 درس</span>
+            <span>⏱ 14 ساعة</span>
+          </div>
+        </div>
+        <div class="course-card">
+          <span class="tag">مسار كامل</span>
+          <div class="course-icon">🚀</div>
+          <h3>مسار Full Stack</h3>
+          <p>من الفرونت إند للباك إند حتى نشر المشروع على الإنترنت.</p>
+          <div class="course-meta">
+            <span>📚 45 درس</span>
+            <span>⏱ 40 ساعة</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>ليه تتعلم مع MEDO EL JAN؟</h2>
+        <p>منصة مصممة عشان تخليك مبرمج حقيقي مش حافظ</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">💻</div>
+          <h3>تمارين عملية</h3>
+          <p>كل درس فيه تمارين وكود تكتبه بنفسك عشان تثبت المعلومة.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>مشاريع حقيقية</h3>
+          <p>هتبني مشاريع كاملة تقدر تضيفها في الـ Portfolio بتاعك.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>تعلم من أي مكان</h3>
+          <p>الموقع متوافق مع الموبايل والتابلت، اتعلم وأنت في أي حتة.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔥</div>
+          <h3>محتوى محدث</h3>
+          <p>الدروس بتتحدث باستمرار مع أحدث التقنيات في السوق.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / Contact -->
+  <section class="cta-section" id="contact">
+    <div class="container">
+      <div class="cta-box">
+        <h2>جاهز تبدأ رحلة البرمجة؟</h2>
+        <p>انضم دلوقتي وابدأ أول درس مجانًا</p>
+        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:28px;">
+          <a href="#courses" class="btn btn-primary">ابدأ الآن مجانًا</a>
+          <a href="https://wa.me/message/IDAQMNL3ABVAN1" target="_blank" class="btn btn-outline" style="display:inline-flex; align-items:center; gap:8px;">
+            تواصل واتساب
+          </a>
+        </div>
+        <p style="margin:0; font-size:1.15rem;">
+          أو اتصل مباشرة:
+          <a href="tel:01044745319" style="color:var(--primary); font-weight:700; text-decoration:none; letter-spacing:1px;">
+            01044745319
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="#" class="logo">MEDO <span>EL JAN</span></a>
+          <p>منصة تعليم البرمجة بأسلوب بسيط وعملي</p>
+          <p style="margin-top:10px;">
+            <a href="tel:01044745319" style="color:var(--primary); text-decoration:none; font-weight:600;">
+              📞 01044745319
+            </a>
+          </p>
+        </div>
+        <div class="footer-links">
+          <a href="#home">الرئيسية</a>
+          <a href="#courses">الدورات</a>
+          <a href="#features">المميزات</a>
+          <a href="#contact">تواصل</a>
+          <a href="https://wa.me/message/IDAQMNL3ABVAN1" target="_blank">واتساب</a>
+        </div>
+      </div>
+      <div class="copyright">
+        © 2026 MEDO EL JAN — جميع الحقوق محفوظة
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Particles Background =====
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const particleCount = 70;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.6;
+        this.speedY = (Math.random() - 0.5) * 0.6;
+        this.opacity = Math.random() * 0.5 + 0.1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 245, 212, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    function connectParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 245, 212, ${0.12 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.6;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      connectParticles();
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ===== Mobile Menu =====
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+
+    // Close menu on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+      });
+    });
+
+    // Active nav on scroll
+    const sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (scrollY >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.querySelectorAll('a').forEach(a => {
+        a.classList.remove('active');
+        if (a.getAttribute('href') === '#' + current) {
+          a.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
